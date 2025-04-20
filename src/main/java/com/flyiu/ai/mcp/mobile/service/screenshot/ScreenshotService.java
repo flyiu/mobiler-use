@@ -64,9 +64,9 @@ public class ScreenshotService {
             Path targetPath = Paths.get(appiumConfig.getScreenshots().getStoragePath(), fileName);
 
             // 压缩图片并保存
-            compressAndSaveImage(screenshotFile, targetPath.toFile(), 
-                               DEFAULT_COMPRESSION_QUALITY, 
-                               DEFAULT_SCALE_FACTOR);
+            compressAndSaveImage(screenshotFile, targetPath.toFile(),
+                    DEFAULT_COMPRESSION_QUALITY,
+                    DEFAULT_SCALE_FACTOR);
             log.info("压缩截图保存成功: {}", targetPath);
 
             // 清理临时文件
@@ -89,15 +89,15 @@ public class ScreenshotService {
         try {
             // 获取截图
             File screenshotFile = operationService.takeScreenshot(deviceName);
-            
+
             // 生成保存路径
             String fileName = generateFileName(deviceName);
             Path targetPath = Paths.get(appiumConfig.getScreenshots().getStoragePath(), fileName);
-            
+
             // 压缩图片并保存
-            File compressedFile = compressAndSaveImage(screenshotFile, targetPath.toFile(), 
-                                                     DEFAULT_COMPRESSION_QUALITY, 
-                                                     DEFAULT_SCALE_FACTOR);
+            File compressedFile = compressAndSaveImage(screenshotFile, targetPath.toFile(),
+                    DEFAULT_COMPRESSION_QUALITY,
+                    DEFAULT_SCALE_FACTOR);
             log.info("压缩截图保存成功: {}", targetPath);
 
             // 将压缩后的图片转换为Base64
@@ -117,8 +117,8 @@ public class ScreenshotService {
     /**
      * 获取设备截图并转换为Base64，可指定压缩质量和缩放比例
      * 
-     * @param deviceName 设备名称
-     * @param quality 压缩质量 (0.0-1.0)
+     * @param deviceName  设备名称
+     * @param quality     压缩质量 (0.0-1.0)
      * @param scaleFactor 缩放比例 (0.0-1.0)
      * @return Base64编码的图片
      */
@@ -126,15 +126,15 @@ public class ScreenshotService {
         try {
             // 获取截图
             File screenshotFile = operationService.takeScreenshot(deviceName);
-            
+
             // 生成保存路径
             String fileName = generateFileName(deviceName);
             Path targetPath = Paths.get(appiumConfig.getScreenshots().getStoragePath(), fileName);
-            
+
             // 压缩图片并保存
-            File compressedFile = compressAndSaveImage(screenshotFile, targetPath.toFile(), 
-                                                     quality, 
-                                                     scaleFactor);
+            File compressedFile = compressAndSaveImage(screenshotFile, targetPath.toFile(),
+                    quality,
+                    scaleFactor);
             log.info("压缩截图保存成功: {}", targetPath);
 
             // 将压缩后的图片转换为Base64
@@ -154,50 +154,51 @@ public class ScreenshotService {
     /**
      * 压缩图片并保存到指定位置
      * 
-     * @param sourceFile 源图片文件
-     * @param targetFile 目标文件
-     * @param quality 压缩质量 (0.0-1.0)
+     * @param sourceFile  源图片文件
+     * @param targetFile  目标文件
+     * @param quality     压缩质量 (0.0-1.0)
      * @param scaleFactor 缩放比例 (0.0-1.0)
      * @return 保存的文件
      * @throws IOException 如果处理图片时发生错误
      */
-    private File compressAndSaveImage(File sourceFile, File targetFile, float quality, float scaleFactor) throws IOException {
+    private File compressAndSaveImage(File sourceFile, File targetFile, float quality, float scaleFactor)
+            throws IOException {
         BufferedImage originalImage = ImageIO.read(sourceFile);
         String format = appiumConfig.getScreenshots().getFormat().toLowerCase();
-        
+
         // 调整图片尺寸
         int newWidth = (int) (originalImage.getWidth() * scaleFactor);
         int newHeight = (int) (originalImage.getHeight() * scaleFactor);
-        
+
         BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, originalImage.getType());
         Graphics2D g = resizedImage.createGraphics();
         g.drawImage(originalImage, 0, 0, newWidth, newHeight, null);
         g.dispose();
-        
+
         // 压缩图片并写入文件
         ImageWriter writer = ImageIO.getImageWritersByFormatName(format).next();
         ImageWriteParam writeParam = writer.getDefaultWriteParam();
-        
+
         if (writeParam.canWriteCompressed()) {
             writeParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
             writeParam.setCompressionQuality(quality);
         }
-        
+
         try (ImageOutputStream outputStream = ImageIO.createImageOutputStream(targetFile)) {
             writer.setOutput(outputStream);
             writer.write(null, new IIOImage(resizedImage, null, null), writeParam);
         } finally {
             writer.dispose();
         }
-        
+
         return targetFile;
     }
 
     /**
      * 压缩图片并转换为Base64
      * 
-     * @param imageFile 原图片文件
-     * @param quality 压缩质量 (0.0-1.0)
+     * @param imageFile   原图片文件
+     * @param quality     压缩质量 (0.0-1.0)
      * @param scaleFactor 缩放比例 (0.0-1.0)
      * @return Base64编码的图片
      * @throws IOException 如果处理图片时发生错误
@@ -205,33 +206,33 @@ public class ScreenshotService {
     private String compressAndEncodeToBase64(File imageFile, float quality, float scaleFactor) throws IOException {
         BufferedImage originalImage = ImageIO.read(imageFile);
         String format = appiumConfig.getScreenshots().getFormat().toLowerCase();
-        
+
         // 调整图片尺寸
         int newWidth = (int) (originalImage.getWidth() * scaleFactor);
         int newHeight = (int) (originalImage.getHeight() * scaleFactor);
-        
+
         BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, originalImage.getType());
         Graphics2D g = resizedImage.createGraphics();
         g.drawImage(originalImage, 0, 0, newWidth, newHeight, null);
         g.dispose();
-        
+
         // 压缩图片
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ImageWriter writer = ImageIO.getImageWritersByFormatName(format).next();
         ImageWriteParam writeParam = writer.getDefaultWriteParam();
-        
+
         if (writeParam.canWriteCompressed()) {
             writeParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
             writeParam.setCompressionQuality(quality);
         }
-        
+
         try (ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(outputStream)) {
             writer.setOutput(imageOutputStream);
             writer.write(null, new IIOImage(resizedImage, null, null), writeParam);
         } finally {
             writer.dispose();
         }
-        
+
         byte[] compressedImageData = outputStream.toByteArray();
         return Base64.getEncoder().encodeToString(compressedImageData);
     }
