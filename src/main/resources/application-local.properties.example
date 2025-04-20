@@ -1,0 +1,26 @@
+# OpenAI API配置
+spring.ai.openai.api-key=your-api-key-here
+spring.ai.openai.base-url=your-base-url-here
+spring.ai.openai.chat.options.model=your-model-name-here
+
+# Appium配置
+appium.server.url=http://localhost:4723
+appium.server.auto-start=false
+appium.screenshots.storage-path=./screenshots
+appium.screenshots.format=png
+appium.screenshots.quality=90
+
+# 录屏配置
+appium.recording.storage-path=./videos
+appium.recording.format=mp4
+appium.recording.quality=medium
+appium.recording.default-duration=180
+appium.recording.max-duration=1800
+appium.recording.sync-path=
+
+# 应用启动时自动录制配置
+app.auto-record=false
+# 设置为要自动录制的设备名称，留空则不自动录制
+app.auto-record-device=
+# 自动录制的时长（秒）
+app.auto-record-duration=300 

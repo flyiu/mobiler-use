@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: mcp-mobile-service
+  ai:
+    mcp:
+      server:
+        enabled: true
+        name: mobile-mcp-server
+        version: 1.0.0
+        type: SYNC
+        stdio: false
+        sse-message-endpoint: /mcp/messages
+        # sse-endpoint: /api/mcp/sse
+        resource-change-notification: true
+        prompt-change-notification: true
+        tool-change-notification: true
+
+server:
+  port: 9080
+
+# Appium配置
+appium:
+  server:
+    url: http://127.0.0.1:4723
+    connect-timeout: 30000
+    # 是否自动启动Appium服务器
+    auto-start: true
+    # Appium可执行文件路径，可以是全路径如 C:/Users/username/AppData/Roaming/npm/appium.cmd
+    appium-path: appium
+  screenshots:
+    # 截图存储路径
+    storage-path: ./screenshots
+    # 图片格式：png/jpg
+    format: png
+    # 图片质量（1-100，仅对jpg有效）
+    quality: 90
+
+# 设备配置示例
+devices:
+  android:
+    - name: default-android
+      platform-name: Android
+      automation-name: UiAutomator2
+      udid: auto
+      no-reset: true
+      new-command-timeout: 60
+  ios:
+    - name: default-ios
+      platform-name: iOS
+      automation-name: XCUITest
+      udid: auto
+      no-reset: true
+      new-command-timeout: 60 
