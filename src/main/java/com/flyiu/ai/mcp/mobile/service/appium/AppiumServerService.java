@@ -60,77 +60,77 @@ public class AppiumServerService {
      * @return 是否成功启动
      */
     public boolean startServer() {
-        if (isServerRunning()) {
-            log.info("Appium服务器已经在运行中");
-            return true;
-        }
-
-        try {
-            log.info("正在启动Appium服务器...");
-
-            String appiumPath = appiumConfig.getServer().getAppiumPath();
-            log.info("使用Appium路径: {}", appiumPath);
-
-            // 检查是否是文件路径
-            if (appiumPath.contains("/") || appiumPath.contains("\\")) {
-                // 验证路径是否存在
-                Path path = Paths.get(appiumPath);
-                if (!Files.exists(path)) {
-                    log.error("Appium可执行文件不存在: {}", appiumPath);
-                    return false;
-                }
-            }
-
-            // 构建启动命令 - 使用cmd /c来执行命令
-            ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", appiumPath,
-                    "--address", "0.0.0.0",
-                    "--port", String.valueOf(getPortFromUrl(appiumConfig.getServer().getUrl())),
-                    "--log-level", "debug",
-                    "--relaxed-security");
-            processBuilder.redirectErrorStream(true);
-
-            log.info("执行命令: cmd /c {} --address 0.0.0.0 --port {} --log-level debug --relaxed-security",
-                    appiumPath, getPortFromUrl(appiumConfig.getServer().getUrl()));
-
-            // 启动进程
-            appiumProcess = processBuilder.start();
-
-            // 读取输出
-            BufferedReader reader = new BufferedReader(new InputStreamReader(appiumProcess.getInputStream()));
-            String line;
-            int timeoutSeconds = 30;
-            long startTime = System.currentTimeMillis();
-
-            // 等待Appium服务器启动
-            while ((System.currentTimeMillis() - startTime) < timeoutSeconds * 1000) {
-                if (isServerRunning()) {
-                    log.info("Appium服务器已成功启动");
-                    return true;
-                }
-
-                // 输出Appium启动日志
-                while (reader.ready() && (line = reader.readLine()) != null) {
-                    log.info("Appium: {}", line);
-                }
-
-                Thread.sleep(1000);
-            }
-
-            Runnable runnable = () -> {
-                try {
-                    appiumProcess.waitFor();
-                } catch (InterruptedException e) {
-                    log.error("Appium服务器异常", e);
-                }
-            };
-            new Thread(runnable).start();
-
-            log.error("Appium服务器启动超时");
-            return false;
-        } catch (IOException | InterruptedException e) {
-            log.error("启动Appium服务器失败", e);
-            return false;
-        }
+        return true;
+//        if (isServerRunning()) {
+//            log.info("Appium服务器已经在运行中");
+//            return true;
+//        }
+//        try {
+//            log.info("正在启动Appium服务器...");
+//
+//            String appiumPath = appiumConfig.getServer().getAppiumPath();
+//            log.info("使用Appium路径: {}", appiumPath);
+//
+//            // 检查是否是文件路径
+//            if (appiumPath.contains("/") || appiumPath.contains("\\")) {
+//                // 验证路径是否存在
+//                Path path = Paths.get(appiumPath);
+//                if (!Files.exists(path)) {
+//                    log.error("Appium可执行文件不存在: {}", appiumPath);
+//                    return false;
+//                }
+//            }
+//
+//            // 构建启动命令 - 使用cmd /c来执行命令
+//            ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", appiumPath,
+//                    "--address", "0.0.0.0",
+//                    "--port", String.valueOf(getPortFromUrl(appiumConfig.getServer().getUrl())),
+//                    "--log-level", "debug",
+//                    "--relaxed-security");
+//            processBuilder.redirectErrorStream(true);
+//
+//            log.info("执行命令: cmd /c {} --address 0.0.0.0 --port {} --log-level debug --relaxed-security",
+//                    appiumPath, getPortFromUrl(appiumConfig.getServer().getUrl()));
+//
+//            // 启动进程
+//            appiumProcess = processBuilder.start();
+//
+//            // 读取输出
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(appiumProcess.getInputStream()));
+//            String line;
+//            int timeoutSeconds = 30;
+//            long startTime = System.currentTimeMillis();
+//
+//            // 等待Appium服务器启动
+//            while ((System.currentTimeMillis() - startTime) < timeoutSeconds * 1000) {
+//                if (isServerRunning()) {
+//                    log.info("Appium服务器已成功启动");
+//                    return true;
+//                }
+//
+//                // 输出Appium启动日志
+//                while (reader.ready() && (line = reader.readLine()) != null) {
+//                    log.info("Appium: {}", line);
+//                }
+//
+//                Thread.sleep(1000);
+//            }
+//
+//            Runnable runnable = () -> {
+//                try {
+//                    appiumProcess.waitFor();
+//                } catch (InterruptedException e) {
+//                    log.error("Appium服务器异常", e);
+//                }
+//            };
+//            new Thread(runnable).start();
+//
+//            log.error("Appium服务器启动超时");
+//            return false;
+//        } catch (IOException | InterruptedException e) {
+//            log.error("启动Appium服务器失败", e);
+//            return false;
+//        }
     }
 
     /**

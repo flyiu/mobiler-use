@@ -43,11 +43,11 @@ devices:
       automation-name: UiAutomator2
       udid: auto
       no-reset: true
-      new-command-timeout: 60
+      new-command-timeout: 600
   ios:
     - name: default-ios
       platform-name: iOS
       automation-name: XCUITest
       udid: auto
       no-reset: true
-      new-command-timeout: 60 
+      new-command-timeout: 600

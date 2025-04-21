@@ -682,7 +682,7 @@ public class AppiumOperationService {
                     Thread.sleep(1000);
                     // enter
 
-                    // 点击搜索结果:预期是通过文字定位数组第一个
+                    // 点击搜索结果:预期是通过文字定位数组第一个,如果是英文需要忽视大小写
                     List<WebElement> searchResults = androidDriver.findElements(By.xpath(
                             "//*[@text='" + appName + "' or @content-desc='" + appName + "']"));
 

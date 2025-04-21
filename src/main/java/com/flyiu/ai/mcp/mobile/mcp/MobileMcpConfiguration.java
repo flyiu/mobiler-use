@@ -81,7 +81,7 @@ public class MobileMcpConfiguration {
          * 连接Android设备
          */
         @Tool(name = "connectAndroid", description = "连接Android设备")
-        public Map<String, Object> connectAndroid(String deviceName) {
+        public Map<String, Object> connectAndroid(@ToolParam(description = "默认使用 default-android") String deviceName) {
             try {
                 deviceName = (deviceName == null || deviceName.isEmpty()) ? "default-android" : deviceName;
 

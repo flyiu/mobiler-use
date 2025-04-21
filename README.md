@@ -114,7 +114,10 @@ LLM工具调用示例：
 }
 ```
 
-## 在Cursor中使用
+## 在Cursor、其它MCP中使用
+
+{ "mcpServers": { "mobile": { "url": "http://localhost:9080/sse" } } }
+
 
 ### 推荐模型
 - 建议使用Claude 3.7或Gemini 2.5

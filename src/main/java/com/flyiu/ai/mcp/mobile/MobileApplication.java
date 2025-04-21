@@ -42,26 +42,26 @@ public class MobileApplication {
         System.out.println("MCP移动设备控制应用启动成功");
     }
 
-    @Bean
-    public CommandLineRunner autoRecordRunner(RecordService recordService,
-            AppiumSessionManager sessionManager) {
-        return args -> {
-            if (autoRecord && autoRecordDevice != null && !autoRecordDevice.trim().isEmpty()) {
-                try {
-                    log.info("系统启动时自动开始录制设备: {}, 时长: {}秒", autoRecordDevice, autoRecordDuration);
-
-                    // 检查设备是否已连接
-                    if (sessionManager.getSession(autoRecordDevice).isPresent()) {
-                        // 启动录制
-                        recordService.startRecording(autoRecordDevice, autoRecordDuration);
-                        log.info("已成功启动自动录制");
-                    } else {
-                        log.warn("无法启动自动录制，设备 {} 未连接", autoRecordDevice);
-                    }
-                } catch (Exception e) {
-                    log.error("自动录制启动失败", e);
-                }
-            }
-        };
-    }
+//    @Bean
+//    public CommandLineRunner autoRecordRunner(RecordService recordService,
+//            AppiumSessionManager sessionManager) {
+//        return args -> {
+//            if (autoRecord && autoRecordDevice != null && !autoRecordDevice.trim().isEmpty()) {
+//                try {
+//                    log.info("系统启动时自动开始录制设备: {}, 时长: {}秒", autoRecordDevice, autoRecordDuration);
+//
+//                    // 检查设备是否已连接
+//                    if (sessionManager.getSession(autoRecordDevice).isPresent()) {
+//                        // 启动录制
+//                        recordService.startRecording(autoRecordDevice, autoRecordDuration);
+//                        log.info("已成功启动自动录制");
+//                    } else {
+//                        log.warn("无法启动自动录制，设备 {} 未连接", autoRecordDevice);
+//                    }
+//                } catch (Exception e) {
+//                    log.error("自动录制启动失败", e);
+//                }
+//            }
+//        };
+//    }
 }
