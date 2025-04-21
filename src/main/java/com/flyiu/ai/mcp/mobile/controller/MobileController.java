@@ -272,6 +272,27 @@ public class MobileController {
     }
 
     /**
+     * 获取所有可见元素,需要传入目的
+     * 
+     * @param deviceName
+     * @param purpose    目的
+     * @param useLLM     是否使用大模型进行判断，如果不使用大模型，本地可能无法对于图片的含义进行判断
+     * @return
+     */
+    @PostMapping("/getAllVisibleElements")
+    @ResponseBody
+    public List<Map<String, Object>> getAllVisibleElements(@RequestParam String deviceName,
+            @RequestParam String purpose,
+            @RequestParam(required = false) Boolean useLLM) {
+        try {
+            return operationService.getAllVisibleElements(deviceName, purpose, useLLM != null ? useLLM : true);
+        } catch (Exception e) {
+            log.error("获取所有可见元素失败: {}", deviceName, e);
+            return List.of();
+        }
+    }
+
+    /**
      * 按坐标点击屏幕
      */
     @PostMapping("/tapByCoordinates")

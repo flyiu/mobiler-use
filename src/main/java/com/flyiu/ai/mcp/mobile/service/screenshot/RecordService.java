@@ -76,6 +76,12 @@ public class RecordService {
 
         // 限制不超过最大录制时长
         int maxDuration = appiumConfig.getRecording().getMaxDuration();
+
+        if (maxDuration == 0) {
+            log.warn("最大录制时长为0，不进行录制");
+            return null;
+        }
+
         if (durationSeconds > maxDuration) {
             log.warn("录制时长{}秒超过最大限制{}秒，已调整为最大值", durationSeconds, maxDuration);
             durationSeconds = maxDuration;

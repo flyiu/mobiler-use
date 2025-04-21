@@ -388,7 +388,7 @@ public class MobileMcpConfiguration {
          */
         @Tool(name = "getAllVisibleElements", description = "获取可见元素，通过视觉识别获取元素的坐标，需要传入目的")
         public List<Map<String, Object>> getAllVisibleElements(String deviceName, String purpose,
-                @ToolParam(description = "是否使用大模型进行判断，如果不使用大模型，本地可能无法对于图片的含义进行判断") Boolean useLLM) {
+                @ToolParam(description = "纯本地判断速度快，如果使用大模型，可能无法对于图片的含义进行判断，请自动判断是否使用大模型") Boolean useLLM) {
             try {
                 return operationService.getAllVisibleElements(deviceName, purpose, useLLM != null ? useLLM : true);
             } catch (Exception e) {

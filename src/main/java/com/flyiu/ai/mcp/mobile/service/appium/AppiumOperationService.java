@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flyiu.ai.mcp.mobile.ai.AiService;
 import com.flyiu.ai.mcp.mobile.model.DeviceSession;
 import com.flyiu.ai.mcp.mobile.service.screenshot.RecordService;
 import com.flyiu.ai.mcp.mobile.util.AndroidPageUtils;
@@ -60,6 +61,8 @@ public class AppiumOperationService {
     @Autowired
     private RecordService recordService;
 
+    @Autowired
+    private AiService aiService;
     @Autowired
     public AppiumOperationService(AppiumSessionManager sessionManager) {
         this.sessionManager = sessionManager;
@@ -314,25 +317,31 @@ public class AppiumOperationService {
             // 使用Spring AI的ChatModel发送请求
             try {
                 // 由于Spring AI当前版本限制，使用文本方式发送请求
-                List<dev.langchain4j.data.message.Content> contents = new ArrayList<>();
-                contents.add(TextContent.from(prompt + "\n\n注意：这个Base64字符串代表了一张截图，请分析其中的UI元素。"));
-                contents.add(ImageContent.from("data:image/png;base64," + base64Image));
-                ChatMessage userMessage = UserMessage.from(contents);
 
-                // OpenAiApi openAiApi =
-                // OpenAiApi.builder().apiKey(apiKey).baseUrl(baseUrl).build();
-                OpenAiChatModel chatModel = OpenAiChatModel.builder().apiKey(apiKey).baseUrl(baseUrl).modelName(model)
-                        .build();
 
-                ChatRequest chatRequest = ChatRequest.builder().responseFormat(ResponseFormat.JSON)
-                        .messages(List.of(userMessage)).build();
-                ChatResponse response = chatModel.chat(chatRequest);
-                log.info("大模型分析结果: {}", response.aiMessage().text());
+                String result = aiService.imageRecognition(base64Image, prompt, ResponseFormat.JSON);
+                log.info("大模型分析结果: {}", result);
+
+
+                // List<dev.langchain4j.data.message.Content> contents = new ArrayList<>();
+                // contents.add(TextContent.from(prompt + "\n\n注意：这个Base64字符串代表了一张截图，请分析其中的UI元素。"));
+                // contents.add(ImageContent.from("data:image/png;base64," + base64Image));
+                // ChatMessage userMessage = UserMessage.from(contents);
+
+                // // OpenAiApi openAiApi =
+                // // OpenAiApi.builder().apiKey(apiKey).baseUrl(baseUrl).build();
+                // OpenAiChatModel chatModel = OpenAiChatModel.builder().apiKey(apiKey).baseUrl(baseUrl).modelName(model)
+                //         .build();
+
+                // ChatRequest chatRequest = ChatRequest.builder().responseFormat(ResponseFormat.JSON)
+                //         .messages(List.of(userMessage)).build();
+                // ChatResponse response = chatModel.chat(chatRequest);
+                // log.info("大模型分析结果: {}", response.aiMessage().text());
 
                 // 解析响应数据
                 try {
                     // 提取JSON部分，可能需要根据实际响应格式调整
-                    String responseText = extractJsonFromText(response.aiMessage().text());
+                    String responseText = extractJsonFromText(result);
 
                     // 将JSON转换为对象
                     ObjectMapper mapper = new ObjectMapper();
@@ -661,14 +670,6 @@ public class AppiumOperationService {
                 Thread.sleep(500);
 
                 log.info("没有找到应用图标，尝试在搜索框中搜索");
-
-                // 尝试找到搜索框并搜索
-                // List<WebElement> searchBoxes = androidDriver.findElements(
-                // By.xpath(
-                // "//*[@resource-id='search_box_input' or contains(@resource-id, 'search') or
-                // @text='搜索' or @content-desc='搜索']"));
-
-                // 查找EditText
                 // 输入应用名称
                 WebElement searchInput = androidDriver.findElement(By.className("android.widget.EditText"));
 
@@ -680,8 +681,6 @@ public class AppiumOperationService {
 
                     searchInput.sendKeys(appName);
                     Thread.sleep(1000);
-                    // enter
-
                     // 点击搜索结果:预期是通过文字定位数组第一个,如果是英文需要忽视大小写
                     List<WebElement> searchResults = androidDriver.findElements(By.xpath(
                             "//*[@text='" + appName + "' or @content-desc='" + appName + "']"));
@@ -690,7 +689,8 @@ public class AppiumOperationService {
                         searchResults.get(1).click();
                     } else {
                         log.error("搜索结果中未找到应用: {}", appName);
-                        throw new RuntimeException("无法找到并启动应用: " + appName);
+                        // 直接敲enter
+                        androidDriver.pressKey(new KeyEvent(AndroidKey.ENTER));
                     }
                 } else {
                     // 如果找不到搜索框，尝试使用adb命令启动
@@ -862,7 +862,6 @@ public class AppiumOperationService {
         } catch (Exception e) {
             log.warn("执行Home键操作失败: {}", e.getMessage());
         }
-
         // 重新启动应用
         launchApp(deviceName, appPackage, appName);
     }
